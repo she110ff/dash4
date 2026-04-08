@@ -20,6 +20,12 @@ AI 기반 투명 후불제 4주 MVP 제작 서비스 플랫폼.
 
 (to be defined)
 
+## Design System
+Always read DESIGN.md before making any visual or UI decisions.
+All font choices, colors, spacing, and aesthetic direction are defined there.
+Do not deviate without explicit user approval.
+In QA mode, flag any code that doesn't match DESIGN.md.
+
 ## Design Doc
 
 ~/.gstack/projects/dash4/youngsoo.jung-unknown-design-20260409-031313.md
