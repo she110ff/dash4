@@ -26,12 +26,21 @@ dash4/
 └── CLAUDE.md        # 이 파일
 ```
 
+## Ports
+
+| Service | Port |
+|---------|------|
+| Server (NestJS) | 7111 |
+| Client (Vite) | 7112 |
+| DB (PostgreSQL) | 7113 (외부) → 5432 (컨테이너 내부) |
+
 ## Commands
 
 ```bash
+docker compose up -d  # PostgreSQL 컨테이너 시작
 pnpm run dev          # client + server 동시 실행
-pnpm run dev:server   # 백엔드만
-pnpm run dev:client   # 프론트만
+pnpm run dev:server   # 백엔드만 (localhost:7111)
+pnpm run dev:client   # 프론트만 (localhost:7112)
 pnpm run test:server  # 서버 테스트 (Jest)
 pnpm run test:client  # 클라이언트 테스트 (Vitest)
 cd server && npx prisma migrate dev   # DB 마이그레이션

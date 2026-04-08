@@ -1,0 +1,15 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: dash4-db
+    environment:
+      POSTGRES_USER: dash4
+      POSTGRES_PASSWORD: dash4local
+      POSTGRES_DB: dash4
+    ports:
+      - "7113:5432"
+    volumes:
+      - dash4-pgdata:/var/lib/postgresql/data
+
+volumes:
+  dash4-pgdata:
