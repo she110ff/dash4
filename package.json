@@ -1,0 +1,17 @@
+{
+  "name": "dash4",
+  "private": true,
+  "scripts": {
+    "dev:server": "cd server && pnpm run start:dev",
+    "dev:client": "cd client && pnpm run dev",
+    "dev": "concurrently \"pnpm run dev:server\" \"pnpm run dev:client\"",
+    "build:server": "cd server && pnpm run build",
+    "build:client": "cd client && pnpm run build",
+    "test:server": "cd server && pnpm run test",
+    "test:client": "cd client && pnpm run test",
+    "generate:types": "cd server && pnpm run swagger:generate && cp swagger.json ../client/src/api/ && cd ../client && pnpm run generate:api-types"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.0"
+  }
+}

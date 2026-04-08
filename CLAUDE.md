@@ -14,11 +14,29 @@ AI 기반 투명 후불제 4주 MVP 제작 서비스 플랫폼.
 
 ## Project Structure
 
-(to be defined as build progresses)
+```
+dash4/
+├── client/          # Vite + React + TypeScript (프론트엔드)
+├── server/          # NestJS + Prisma + PostgreSQL (백엔드)
+│   ├── prisma/      # Prisma schema
+│   ├── generated/   # Prisma client (gitignored)
+│   └── src/         # NestJS modules
+├── DESIGN.md        # 디자인 시스템
+├── CASE_STUDY.md    # 케이스 스터디 #1 기록
+└── CLAUDE.md        # 이 파일
+```
 
 ## Commands
 
-(to be defined)
+```bash
+pnpm run dev          # client + server 동시 실행
+pnpm run dev:server   # 백엔드만
+pnpm run dev:client   # 프론트만
+pnpm run test:server  # 서버 테스트 (Jest)
+pnpm run test:client  # 클라이언트 테스트 (Vitest)
+cd server && npx prisma migrate dev   # DB 마이그레이션
+cd server && npx prisma generate      # Prisma 클라이언트 재생성
+```
 
 ## Design System
 Always read DESIGN.md before making any visual or UI decisions.

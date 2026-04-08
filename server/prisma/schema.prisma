@@ -1,0 +1,120 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum UserRole {
+  ADMIN
+  CLIENT
+}
+
+enum ProjectStatus {
+  W1
+  W2
+  W3
+  W4
+  DONE
+  PAUSED
+}
+
+enum InvoiceStatus {
+  PENDING
+  PAID
+  CANCELLED
+}
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  passwordHash  String
+  name          String
+  role          UserRole  @default(CLIENT)
+  refreshToken  String?
+  mustChangePassword Boolean @default(true)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  projects      Project[] @relation("ClientProjects")
+  sentMessages  ChatMessage[]
+
+  @@map("users")
+}
+
+model Project {
+  id            String        @id @default(cuid())
+  name          String
+  clientId      String
+  client        User          @relation("ClientProjects", fields: [clientId], references: [id])
+  status        ProjectStatus @default(W1)
+  startDate     DateTime      @default(now())
+  githubRepoUrl String?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  commits       Commit[]
+  reports       WeeklyReport[]
+  invoices      Invoice[]
+  messages      ChatMessage[]
+
+  @@map("projects")
+}
+
+model Commit {
+  id          String   @id @default(cuid())
+  projectId   String
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  sha         String
+  message     String
+  author      String
+  timestamp   DateTime
+  url         String?
+  createdAt   DateTime @default(now())
+
+  @@unique([projectId, sha])
+  @@map("commits")
+}
+
+model WeeklyReport {
+  id              String   @id @default(cuid())
+  projectId       String
+  project         Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  weekNumber      Int
+  completedItems  String[]
+  nextWeekPlan    String[]
+  createdAt       DateTime @default(now())
+
+  @@unique([projectId, weekNumber])
+  @@map("weekly_reports")
+}
+
+model Invoice {
+  id          String        @id @default(cuid())
+  projectId   String
+  project     Project       @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  weekNumber  Int
+  amount      Int           @default(2500000)
+  status      InvoiceStatus @default(PENDING)
+  issuedAt    DateTime      @default(now())
+  paidAt      DateTime?
+
+  @@unique([projectId, weekNumber])
+  @@map("invoices")
+}
+
+model ChatMessage {
+  id          String   @id @default(cuid())
+  projectId   String
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  senderId    String
+  sender      User     @relation(fields: [senderId], references: [id])
+  senderRole  UserRole
+  content     String
+  createdAt   DateTime @default(now())
+
+  @@index([projectId, createdAt])
+  @@map("chat_messages")
+}
