@@ -102,7 +102,7 @@ Token refresh (rotation)
 - [x] 히어로, 3 필라, 4주 타임라인, 케이스 스터디 섹션
 - [x] AWS 인프라 선 셋업 (CDK: VPC + RDS + ECS Fargate + S3 + CloudFront)
 
-**커밋 수:** 10
+**커밋 수:** 13
 **산출물:**
 - 설계 문서: 디자인 문서 (adversarial review 8/10)
 - 디자인 시스템: `DESIGN.md` (Satoshi + Pretendard, #2563eb, 이중 테마)
@@ -122,28 +122,43 @@ Token refresh (rotation)
 
 ---
 
-### Week 2: 고객 포털 + 커밋 로그 (04/16 ~ 04/22)
+### Week 2: 고객 포털 + 커밋 로그 + 채팅 (04/16 ~ 04/22)
 
 **목표:**
-- [ ] 프로젝트 대시보드 UI
-- [ ] GitHub webhook → Commit 자동 수집
-- [ ] 커밋 목록 (newest first, sha+msg+시간, 일별 그룹핑)
+- [x] 프로젝트 대시보드 UI (프로젝트 카드, 스켈레톤, 빈 상태)
+- [x] GitHub webhook → Commit 자동 수집 (upsert, cursor pagination)
+- [x] 커밋 목록 (newest first, sha+msg+시간, 일별 그룹핑)
+- [x] Socket.IO 실시간 채팅 (JWT 인증, room 기반, ID dedup)
+- [x] 로그인 페이지 + Auth context + 401 자동 refresh
+- [x] Swagger→TS 타입 자동 생성 파이프라인
 
-**커밋 수:** -
+**커밋 수:** 2
+**산출물:**
+- Swagger API 스크린샷: `docs/screenshots/w2-swagger-api.png`
+- 자동 생성 TS 타입: `client/src/api/schema.d.ts`
+
 **메모:**
+- W2에 채팅을 W3에서 당겨옴 (eng review 결정: W3 과부하 방지)
+- 서버 13개 엔드포인트, 클라이언트 5개 페이지/컴포넌트
 
 ---
 
-### Week 3: 관리자 + 리포트 + 채팅 (04/23 ~ 04/29)
+### Week 3: 관리자 + 리포트 + 인보이스 (04/23 ~ 04/29)
 
 **목표:**
-- [ ] 프로젝트 CRUD (관리자)
-- [ ] 주간 리포트 폼 (completedItems + nextWeekPlan)
-- [ ] Socket.IO 채팅 (텍스트만)
-- [ ] 인보이스 상태 추적
+- [x] 프로젝트 CRUD (관리자)
+- [x] 주간 리포트 폼 (completedItems + nextWeekPlan)
+- [x] 리포트 생성 → 인보이스 자동 생성 (트랜잭션)
+- [x] 인보이스 상태 추적 (PENDING → PAID/CANCELLED)
+- [x] 관리자 페이지 (프로젝트 테이블, 리포트 작성, 인보이스 관리)
 
-**커밋 수:** -
+**커밋 수:** 1
+**산출물:**
+- 서버 18개 엔드포인트 (5개 추가)
+- 관리자 UI: 프로젝트 관리 + 리포트 작성 + 인보이스 관리
+
 **메모:**
+- 리포트 생성 → 인보이스 자동 생성 API 테스트 확인 (curl)
 
 ---
 
