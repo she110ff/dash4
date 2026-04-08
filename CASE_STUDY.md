@@ -20,9 +20,12 @@
 - [ ] DB 스키마 + 시드 데이터
 - [ ] Prisma 모델 정의
 
-**커밋 수:** 0
+**커밋 수:** 5
 **메모:**
 - 2026-04-09: 프로젝트 시작. /office-hours 세션으로 디자인 문서 완성 (8/10 adversarial review 통과)
+- 2026-04-09: /plan-eng-review 완료 (9 issues, 8 resolved). /plan-design-review 완료 (3/10→7/10)
+- 2026-04-09: /design-consultation으로 DESIGN.md 생성 (Satoshi + Pretendard, #2563eb, 다크/라이트 이중 테마)
+- 2026-04-09: 모노레포 스캐폴딩 완료 (NestJS + Vite React + Prisma 6 모델)
 
 ---
 
