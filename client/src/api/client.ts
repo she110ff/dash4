@@ -52,9 +52,24 @@ export const api = {
   projects: {
     list: () => request<any[]>('/projects'),
     get: (id: string) => request<any>(`/projects/${id}`),
+    create: (data: { name: string; clientId: string; githubRepoUrl?: string }) =>
+      request<any>('/projects', { method: 'POST', body: JSON.stringify(data) }),
+    updateStatus: (id: string, status: string) =>
+      request<any>(`/projects/${id}/status`, { method: 'PATCH', body: JSON.stringify({ status }) }),
     commits: (id: string, cursor?: string) =>
       request<any[]>(`/projects/${id}/commits${cursor ? `?cursor=${cursor}` : ''}`),
     messages: (id: string, cursor?: string) =>
       request<any[]>(`/projects/${id}/messages${cursor ? `?cursor=${cursor}` : ''}`),
+  },
+  reports: {
+    list: (projectId: string) => request<any[]>(`/projects/${projectId}/reports`),
+    create: (projectId: string, data: { weekNumber: number; completedItems: string[]; nextWeekPlan: string[] }) =>
+      request<any>(`/projects/${projectId}/reports`, { method: 'POST', body: JSON.stringify(data) }),
+  },
+  invoices: {
+    listByProject: (projectId: string) => request<any[]>(`/projects/${projectId}/invoices`),
+    listAll: () => request<any[]>('/invoices'),
+    updateStatus: (id: string, status: string) =>
+      request<any>(`/invoices/${id}`, { method: 'PATCH', body: JSON.stringify({ status }) }),
   },
 };
