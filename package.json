@@ -9,7 +9,7 @@
     "build:client": "cd client && pnpm run build",
     "test:server": "cd server && pnpm run test",
     "test:client": "cd client && pnpm run test",
-    "generate:types": "cd server && pnpm run swagger:generate && cp swagger.json ../client/src/api/ && cd ../client && pnpm run generate:api-types"
+    "generate:types": "cd server && npx ts-node scripts/generate-swagger.ts && npx openapi-typescript swagger.json -o ../client/src/api/schema.d.ts"
   },
   "devDependencies": {
     "concurrently": "^9.1.0"
