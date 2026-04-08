@@ -10,22 +10,110 @@
 | 스택 | Vite+React, NestJS, Prisma, PostgreSQL, AWS |
 | 개발 방식 | 27년 경력 아키텍트 + Claude Code AI 협업 |
 
+## 시스템 아키텍처
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                       CloudFront (CDN)                       │
+│                    S3 Static (Vite Build)                     │
+│                      dash4.kr (:443)                         │
+└────────────────────────────┬────────────────────────────────┘
+                             │
+┌────────────────────────────▼────────────────────────────────┐
+│                    ALB (Application LB)                       │
+│              /api/* , /socket.io/* → ECS                     │
+└────────────────────────────┬────────────────────────────────┘
+                             │
+┌────────────────────────────▼────────────────────────────────┐
+│              NestJS on ECS Fargate (:7111)                    │
+│                                                              │
+│  ┌────────┐  ┌─────────┐  ┌──────────┐  ┌───────────────┐  │
+│  │  Auth   │  │ Project │  │  Commit  │  │   Chat        │  │
+│  │  JWT    │  │  CRUD   │  │ Webhook  │  │  Socket.IO    │  │
+│  └────────┘  └─────────┘  └──────────┘  └───────────────┘  │
+│  ┌────────────┐  ┌───────────┐  ┌───────────────────────┐  │
+│  │   Report   │  │  Invoice  │  │  Swagger (/api-docs)  │  │
+│  └────────────┘  └───────────┘  └───────────────────────┘  │
+│                                                              │
+│  ┌──────────────────────────────────────────────────────┐   │
+│  │              Prisma ORM → PostgreSQL                   │   │
+│  └──────────────────────────────────────────────────────┘   │
+└──────────────────────────────┬──────────────────────────────┘
+                               │
+┌──────────────────────────────▼──────────────────────────────┐
+│                    RDS PostgreSQL (:5432)                     │
+│                                                              │
+│  users · projects · commits · weekly_reports                 │
+│  invoices · chat_messages                                    │
+└─────────────────────────────────────────────────────────────┘
+```
+
+## 데이터 모델
+
+```
+User ──1:N──> Project ──1:N──> Commit
+                  │──1:N──> WeeklyReport ──triggers──> Invoice
+                  │──1:N──> ChatMessage
+                  └──1:N──> Invoice
+```
+
+## 인증 플로우
+
+```
+Admin creates User (temp password)
+       │
+       ▼
+Client login (email + password)
+       │
+       ├─ JWT access token → httpOnly cookie (15min)
+       ├─ JWT refresh token → httpOnly cookie (7days) + bcrypt hash in DB
+       └─ mustChangePassword flag → 강제 비밀번호 변경
+       │
+       ▼
+Token refresh (rotation)
+       │
+       ├─ 유효한 refresh → 새 access + 새 refresh (이전 무효화)
+       └─ 탈취된 이전 refresh → 전체 세션 무효화 (보안 경보)
+```
+
+## 설계 결정 기록
+
+| 결정 | 선택 | 이유 |
+|------|------|------|
+| 프레임워크 | NestJS + Vite React | 클라이언트 프로젝트와 동일 스택 → "우리가 쓰는 기술로 만들었습니다" |
+| 인증 | 자체 JWT (Passport.js) | 외부 의존성 최소화, 고객 데이터 완전 통제 |
+| DB | PostgreSQL (Prisma 5) | 안정성 검증된 ORM + 타입 안전성 |
+| 배포 | AWS (ECS Fargate + RDS) | 고객 인프라와 동일 환경 → 인프라 비용 의뢰인 직접 관리 가능 |
+| 디자인 | Satoshi + Pretendard, 다크/라이트 이중 테마 | 경쟁사(Inter/Poppins) 차별화, 한글 최적화 |
+| 레이아웃 | 비대칭 좌우 교차 | AI 생성 템플릿과 차별화 (3열 그리드 금지) |
+| 채팅 | Socket.IO (단일 ECS 태스크) | v1 규모(동시 4-5명)에서 충분, Redis Adapter는 v2 |
+
 ## 주간 기록
 
 ### Week 1: 랜딩 + 인증 (04/09 ~ 04/15)
 
 **목표:**
+- [x] JWT 자체 인증 (로그인/로그아웃/비밀번호 변경/refresh rotation)
+- [x] DB 스키마 (6 모델) + 시드 데이터
+- [x] Prisma 모델 정의
+- [x] Swagger API 문서 (/api-docs)
+- [x] ProjectOwnerGuard (IDOR 방지)
 - [ ] 히어로, 3 필라, 4주 타임라인, 케이스 스터디 섹션
-- [ ] JWT 자체 인증 (로그인/로그아웃/비밀번호 변경)
-- [ ] DB 스키마 + 시드 데이터
-- [ ] Prisma 모델 정의
+- [ ] AWS 인프라 선 셋업
 
-**커밋 수:** 5
+**커밋 수:** 8
+**산출물:**
+- 설계 문서: `~/.gstack/projects/dash4/youngsoo.jung-unknown-design-20260409-031313.md` (8/10)
+- 디자인 시스템: `DESIGN.md` (Satoshi + Pretendard, #2563eb, 이중 테마)
+- Swagger: `http://localhost:7111/api-docs` (5개 인증 엔드포인트)
+- 아키텍처 다이어그램: 이 파일 상단 참조
+
 **메모:**
-- 2026-04-09: 프로젝트 시작. /office-hours 세션으로 디자인 문서 완성 (8/10 adversarial review 통과)
-- 2026-04-09: /plan-eng-review 완료 (9 issues, 8 resolved). /plan-design-review 완료 (3/10→7/10)
-- 2026-04-09: /design-consultation으로 DESIGN.md 생성 (Satoshi + Pretendard, #2563eb, 다크/라이트 이중 테마)
-- 2026-04-09: 모노레포 스캐폴딩 완료 (NestJS + Vite React + Prisma 6 모델)
+- 2026-04-09: 프로젝트 시작. /office-hours → 디자인 문서 완성 (8/10 adversarial review)
+- 2026-04-09: /plan-eng-review (9 issues, 8 resolved) + /plan-design-review (3/10→7/10)
+- 2026-04-09: /design-consultation → DESIGN.md 생성. 경쟁사 리서치 반영
+- 2026-04-09: 모노레포 스캐폴딩 + Docker PostgreSQL + JWT 인증 모듈 완성
+- 2026-04-09: Prisma 7→5 다운그레이드 (안정성). 로그인 API 검증 완료
 
 ---
 
