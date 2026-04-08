@@ -84,6 +84,7 @@ Token refresh (rotation)
 | 인증 | 자체 JWT (Passport.js) | 외부 의존성 최소화, 고객 데이터 완전 통제 |
 | DB | PostgreSQL (Prisma 5) | 안정성 검증된 ORM + 타입 안전성 |
 | 배포 | AWS (ECS Fargate + RDS) | 고객 인프라와 동일 환경 → 인프라 비용 의뢰인 직접 관리 가능 |
+| IaC | AWS CDK (TypeScript) | 인프라를 코드로 관리, 재현 가능한 배포 |
 | 디자인 | Satoshi + Pretendard, 다크/라이트 이중 테마 | 경쟁사(Inter/Poppins) 차별화, 한글 최적화 |
 | 레이아웃 | 비대칭 좌우 교차 | AI 생성 템플릿과 차별화 (3열 그리드 금지) |
 | 채팅 | Socket.IO (단일 ECS 태스크) | v1 규모(동시 4-5명)에서 충분, Redis Adapter는 v2 |
@@ -98,15 +99,17 @@ Token refresh (rotation)
 - [x] Prisma 모델 정의
 - [x] Swagger API 문서 (/api-docs)
 - [x] ProjectOwnerGuard (IDOR 방지)
-- [ ] 히어로, 3 필라, 4주 타임라인, 케이스 스터디 섹션
-- [ ] AWS 인프라 선 셋업
+- [x] 히어로, 3 필라, 4주 타임라인, 케이스 스터디 섹션
+- [x] AWS 인프라 선 셋업 (CDK: VPC + RDS + ECS Fargate + S3 + CloudFront)
 
-**커밋 수:** 8
+**커밋 수:** 10
 **산출물:**
-- 설계 문서: `~/.gstack/projects/dash4/youngsoo.jung-unknown-design-20260409-031313.md` (8/10)
+- 설계 문서: 디자인 문서 (adversarial review 8/10)
 - 디자인 시스템: `DESIGN.md` (Satoshi + Pretendard, #2563eb, 이중 테마)
-- Swagger: `http://localhost:7111/api-docs` (5개 인증 엔드포인트)
+- Swagger: `http://localhost:7111/api-docs` (6개 엔드포인트)
 - 아키텍처 다이어그램: 이 파일 상단 참조
+- 인프라 코드: `infra/` (AWS CDK, CloudFormation 자동 생성)
+- 스크린샷: `docs/screenshots/w1-landing-v1.png`
 
 **메모:**
 - 2026-04-09: 프로젝트 시작. /office-hours → 디자인 문서 완성 (8/10 adversarial review)
@@ -114,6 +117,8 @@ Token refresh (rotation)
 - 2026-04-09: /design-consultation → DESIGN.md 생성. 경쟁사 리서치 반영
 - 2026-04-09: 모노레포 스캐폴딩 + Docker PostgreSQL + JWT 인증 모듈 완성
 - 2026-04-09: Prisma 7→5 다운그레이드 (안정성). 로그인 API 검증 완료
+- 2026-04-09: 랜딩페이지 구현 (Satoshi + 다크테마 + 비대칭 레이아웃 + 포털 미리보기)
+- 2026-04-09: AWS CDK 인프라 정의 (VPC, RDS, ECS Fargate, S3+CloudFront, Secrets Manager)
 
 ---
 

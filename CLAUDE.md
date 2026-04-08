@@ -18,9 +18,11 @@ AI 기반 투명 후불제 4주 MVP 제작 서비스 플랫폼.
 dash4/
 ├── client/          # Vite + React + TypeScript (프론트엔드)
 ├── server/          # NestJS + Prisma + PostgreSQL (백엔드)
-│   ├── prisma/      # Prisma schema
-│   ├── generated/   # Prisma client (gitignored)
-│   └── src/         # NestJS modules
+│   ├── prisma/      # Prisma schema + seed
+│   ├── src/         # NestJS modules (auth, prisma, health)
+│   └── Dockerfile   # 프로덕션 빌드
+├── infra/           # AWS CDK (VPC, RDS, ECS, S3, CloudFront)
+├── docs/screenshots # 케이스 스터디용 스크린샷
 ├── DESIGN.md        # 디자인 시스템
 ├── CASE_STUDY.md    # 케이스 스터디 #1 기록
 └── CLAUDE.md        # 이 파일
